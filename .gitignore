@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary logs & console captures
+*.log
+err.log
+out.log
+err.txt
+out.txt
+dashboard_runtime.log
+dashboard_stdout.log
+dashboard_stderr.log
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Environment variables & local secrets
+.env
+.env.local
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System files
+.DS_Store
+Thumbs.db
+Desktop.ini

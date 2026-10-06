@@ -1,0 +1,186 @@
+{
+  "openssh 7.2p2": [
+    {
+      "id": "CVE-2016-10009",
+      "score": 7.8,
+      "severity": "HIGH",
+      "description": "Untrusted search path vulnerability in ssh-agent in OpenSSH before 7.4 allows local attackers to execute arbitrary code via PKCS#11 modules."
+    },
+    {
+      "id": "CVE-2018-15473",
+      "score": 5.3,
+      "severity": "MEDIUM",
+      "description": "OpenSSH through 7.7 is vulnerable to username enumeration due to differences in timing and response to malformed authentication requests."
+    },
+    {
+      "id": "CVE-2016-6210",
+      "score": 5.3,
+      "severity": "MEDIUM",
+      "description": "sshd in OpenSSH before 7.3 creates different timing for hash calculation when authenticating non-existent users, facilitating username harvesting."
+    }
+  ],
+  "apache 2.4.29": [
+    {
+      "id": "CVE-2018-1312",
+      "score": 9.8,
+      "severity": "CRITICAL",
+      "description": "In Apache httpd 2.2.0 to 2.4.29, when generating an HTTP Digest authentication challenge, the nonce sent to prevent reply attacks was not correctly generated using a pseudo-random ..."
+    },
+    {
+      "id": "CVE-2017-15715",
+      "score": 8.1,
+      "severity": "HIGH",
+      "description": "In Apache httpd 2.4.0 to 2.4.29, the expression specified in <FilesMatch> could match '$' to a newline character in a malicious filename, rather than matching only the end of the f..."
+    },
+    {
+      "id": "CVE-2017-15710",
+      "score": 7.5,
+      "severity": "HIGH",
+      "description": "In Apache httpd 2.0.23 to 2.0.65, 2.2.0 to 2.2.34, and 2.4.0 to 2.4.29, mod_authnz_ldap, if configured with AuthLDAPCharsetConfig, uses the Accept-Language header value to lookup t..."
+    },
+    {
+      "id": "CVE-2018-1283",
+      "score": 5.3,
+      "severity": "MEDIUM",
+      "description": "In Apache httpd 2.4.0 to 2.4.29, when mod_session is configured to forward its session data to CGI applications (SessionEnv on, not the default), a remote user may influence their ..."
+    }
+  ],
+  "proftpd 1.3.5": [
+    {
+      "id": "CVE-2015-3306",
+      "score": 10.0,
+      "severity": "CRITICAL",
+      "description": "The mod_copy module in ProFTPD 1.3.5 allows remote attackers to read and write to arbitrary files via the site cpfr and site cpto commands."
+    },
+    {
+      "id": "CVE-2019-12815",
+      "score": 9.8,
+      "severity": "CRITICAL",
+      "description": "An arbitrary file copy vulnerability in mod_copy in ProFTPD up to 1.3.5b allows for remote code execution and information disclosure without authentication, a related issue to CVE-..."
+    },
+    {
+      "id": "CVE-2016-3125",
+      "score": 7.5,
+      "severity": "HIGH",
+      "description": "The mod_tls module in ProFTPD before 1.3.5b and 1.3.6 before 1.3.6rc2 does not properly handle the TLSDHParamFile directive, which might cause a weaker than intended Diffie-Hellman..."
+    },
+    {
+      "id": "CVE-2017-7418",
+      "score": 5.5,
+      "severity": "MEDIUM",
+      "description": "ProFTPD before 1.3.5e and 1.3.6 before 1.3.6rc5 controls whether the home directory of a user could contain a symbolic link through the AllowChrootSymlinks configuration option, bu..."
+    }
+  ],
+  "mysql 5.7.21": [
+    {
+      "id": "CVE-2018-2755",
+      "score": 7.7,
+      "severity": "HIGH",
+      "description": "Vulnerability in the MySQL Server component of Oracle MySQL (subcomponent: Server: Replication). Supported versions that are affected are 5.5.59 and prior, 5.6.39 and prior and 5.7..."
+    },
+    {
+      "id": "CVE-2018-2758",
+      "score": 6.5,
+      "severity": "MEDIUM",
+      "description": "Vulnerability in the MySQL Server component of Oracle MySQL (subcomponent: Server : Security : Privileges). Supported versions that are affected are 5.6.39 and prior and 5.7.21 and..."
+    },
+    {
+      "id": "CVE-2018-2761",
+      "score": 5.9,
+      "severity": "MEDIUM",
+      "description": "Vulnerability in the MySQL Server component of Oracle MySQL (subcomponent: Client programs). Supported versions that are affected are 5.5.59 and prior, 5.6.39 and prior and 5.7.21 ..."
+    },
+    {
+      "id": "CVE-2018-2759",
+      "score": 4.9,
+      "severity": "MEDIUM",
+      "description": "Vulnerability in the MySQL Server component of Oracle MySQL (subcomponent: InnoDB). Supported versions that are affected are 5.7.21 and prior. Easily exploitable vulnerability allo..."
+    }
+  ],
+  "msrpc microsoft windows": [
+    {
+      "id": "N/A (No High/Crit CVE)",
+      "score": 0.0,
+      "severity": "LOW",
+      "description": "No direct high-severity CVE matches identified for this version string."
+    }
+  ],
+  "microsoft-ds smb": [
+    {
+      "id": "CVE-2017-0143",
+      "score": 9.8,
+      "severity": "CRITICAL",
+      "description": "Remote Code Execution vulnerability in Microsoft SMBv1 servers (EternalBlue / MS17-010), allowing unauthenticated remote attackers to execute arbitrary code with SYSTEM privileges."
+    },
+    {
+      "id": "CVE-2017-0144",
+      "score": 9.8,
+      "severity": "CRITICAL",
+      "description": "SMBv1 Remote Code Execution vulnerability in Windows SMB servers (MS17-010) allowing complete system compromise."
+    },
+    {
+      "id": "CVE-2017-0145",
+      "score": 9.8,
+      "severity": "CRITICAL",
+      "description": "Windows SMB Remote Code Execution vulnerability enabling remote wormable exploitation."
+    }
+  ],
+  "ms-wbt-server microsoft terminal": [
+    {
+      "id": "N/A (No High/Crit CVE)",
+      "score": 0.0,
+      "severity": "LOW",
+      "description": "No direct high-severity CVE matches identified for this version string."
+    }
+  ],
+  "msrpc": [
+    {
+      "id": "CVE-2013-4688",
+      "score": 7.8,
+      "severity": "HIGH",
+      "description": "flowd in Juniper Junos 10.4 before 10.4R11 on SRX devices, when the MSRPC Application Layer Gateway (ALG) is enabled, allows remote attackers to cause a denial ..."
+    },
+    {
+      "id": "CVE-2002-1873",
+      "score": 5.0,
+      "severity": "MEDIUM",
+      "description": "Microsoft Exchange 2000, when used with Microsoft Remote Procedure Call (MSRPC), allows remote attackers to cause a denial of service (crash or memory consumpti..."
+    }
+  ],
+  "unknown": [
+    {
+      "id": "SECURE / NO KNOWN HIGH CVEs",
+      "score": 0.0,
+      "severity": "LOW",
+      "description": "No active Critical or High severity CVEs correlated for this service."
+    }
+  ],
+  "postgresql": [
+    {
+      "id": "CVE-2001-0201",
+      "score": 7.5,
+      "severity": "HIGH",
+      "description": "The Postaci frontend for PostgreSQL does not properly filter characters such as semicolons, which could allow remote attackers to execute arbitrary SQL queries ..."
+    },
+    {
+      "id": "CVE-2001-1379",
+      "score": 7.5,
+      "severity": "HIGH",
+      "description": "The PostgreSQL authentication modules (1) mod_auth_pgsql 0.9.5, and (2) mod_auth_pgsql_sys 0.9.4, allow remote attackers to bypass authentication and execute ar..."
+    },
+    {
+      "id": "CVE-2000-1199",
+      "score": 4.6,
+      "severity": "MEDIUM",
+      "description": "PostgreSQL stores usernames and passwords in plaintext in (1) pg_shadow and (2) pg_pwd, which allows attackers with sufficient privileges to gain access to data..."
+    }
+  ],
+  "netbios-ssn": [
+    {
+      "id": "SECURE / NO KNOWN HIGH CVEs",
+      "score": 0.0,
+      "severity": "LOW",
+      "description": "No active Critical or High severity CVEs correlated for this service."
+    }
+  ]
+}

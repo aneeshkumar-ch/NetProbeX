@@ -1,0 +1,22 @@
+# ==============================================================================
+# AUTHORIZED SCAN SCOPE - ENTERPRISE NETWORK SCANNER
+# ==============================================================================
+# ETHICS & LEGAL NOTICE:
+# Only scan systems you have explicit written authorization to test.
+# Unauthorized network scanning may violate organizational policy and law.
+# ==============================================================================
+
+# Target 1: Local Windows Host (Your current machine)
+127.0.0.1
+
+# Target 2: Your Local Network IP (Wi-Fi Interface)
+192.168.1.238
+192.168.1.0/24
+192.168.0.1/24
+172.198.161.144
+
+# Lab Target VMs (Optional - for mentor-assigned virtual lab testing)
+# 192.168.56.101
+# 192.168.56.102
+# 192.168.56.103
+
