@@ -9,10 +9,13 @@
 # Target 1: Local Windows Host (Your current machine)
 127.0.0.1
 
-# Target 2: Your Local Network IP (Wi-Fi Interface)
+# Target 2: Your Local Network IP & Server Lab Infrastructure
 192.168.1.238
 192.168.1.0/24
 192.168.0.1/24
+192.168.0.92
+192.168.0.0/22
+100.84.56.125
 172.198.161.144
 
 # Lab Target VMs (Optional - for mentor-assigned virtual lab testing)

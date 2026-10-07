@@ -201,36 +201,62 @@ def check_ports_chunk(target: str, chunk: List[int], timeout_sec: float, max_thr
     return results
 
 def get_listening_processes() -> Dict[int, Dict[str, Any]]:
-    """Maps listening TCP ports to their Windows Process Name and PID."""
+    """Maps listening TCP ports to their Process Name and PID (Windows and Linux)."""
     port_to_proc = {}
-    try:
-        netstat_out = subprocess.check_output("netstat -ano -p tcp", shell=True, text=True)
-        pid_to_name = {4: "System (Windows Kernel)"}
-
+    if os.name == "nt":
         try:
-            task_out = subprocess.check_output("tasklist /fo csv /nh", shell=True, text=True)
-            for line in task_out.strip().splitlines():
-                parts = [p.strip(' "') for p in line.split('","')]
-                if len(parts) >= 2:
-                    try:
-                        pid_to_name[int(parts[1])] = parts[0]
-                    except ValueError:
-                        pass
+            netstat_out = subprocess.check_output("netstat -ano -p tcp", shell=True, text=True)
+            pid_to_name = {4: "System (Windows Kernel)"}
+
+            try:
+                task_out = subprocess.check_output("tasklist /fo csv /nh", shell=True, text=True)
+                for line in task_out.strip().splitlines():
+                    parts = [p.strip(' "') for p in line.split('","')]
+                    if len(parts) >= 2:
+                        try:
+                            pid_to_name[int(parts[1])] = parts[0]
+                        except ValueError:
+                            pass
+            except Exception:
+                pass
+
+            for line in netstat_out.splitlines():
+                line = line.strip()
+                if "LISTENING" in line:
+                    tokens = line.split()
+                    if len(tokens) >= 5:
+                        local_addr = tokens[1]
+                        pid = int(tokens[4])
+                        port = int(local_addr.split(":")[-1])
+                        proc_name = pid_to_name.get(pid, f"PID {pid}")
+                        port_to_proc[port] = {"pid": pid, "name": proc_name}
         except Exception:
             pass
-
-        for line in netstat_out.splitlines():
-            line = line.strip()
-            if "LISTENING" in line:
+    else:
+        # Linux / POSIX systems
+        try:
+            ss_out = subprocess.check_output(["ss", "-tlpn"], text=True, stderr=subprocess.DEVNULL)
+            for line in ss_out.splitlines()[1:]:
                 tokens = line.split()
-                if len(tokens) >= 5:
-                    local_addr = tokens[1]
-                    pid = int(tokens[4])
-                    port = int(local_addr.split(":")[-1])
-                    proc_name = pid_to_name.get(pid, f"PID {pid}")
-                    port_to_proc[port] = {"pid": pid, "name": proc_name}
-    except Exception:
-        pass
+                if len(tokens) >= 4 and "LISTEN" in tokens[0]:
+                    addr = tokens[3]
+                    port_str = addr.rsplit(":", 1)[-1]
+                    try:
+                        port = int(port_str)
+                    except ValueError:
+                        continue
+                    proc_name = "System / Service"
+                    pid_val: Any = "---"
+                    for tok in tokens[4:]:
+                        if "users:" in tok or "users:((" in tok:
+                            m = re.search(r'\("([^"]+)",pid=(\d+)', tok)
+                            if m:
+                                proc_name = m.group(1)
+                                pid_val = int(m.group(2))
+                            break
+                    port_to_proc[port] = {"pid": pid_val, "name": proc_name}
+        except Exception:
+            pass
     return port_to_proc
 
 
@@ -1748,7 +1774,7 @@ def verify_port_available(host: str, port: int) -> Tuple[bool, str]:
 
 if __name__ == "__main__":
     HOST = "0.0.0.0"
-    PORT = 8765
+    PORT = int(os.environ.get("PORT", 8765))
 
     print("\n" + "=" * 80, flush=True)
     print("  ENTERPRISE NETWORK VULNERABILITY SCANNER — SERVER STARTUP", flush=True)
@@ -1779,12 +1805,16 @@ if __name__ == "__main__":
     print("  Server is starting up... Press Ctrl+C in this console to stop.", flush=True)
     print("=" * 80 + "\n", flush=True)
 
-    import threading
-    import webbrowser
-    def _open_browser():
-        time.sleep(1.2)
-        webbrowser.open(f"http://localhost:{PORT}")
-    threading.Thread(target=_open_browser, daemon=True).start()
+    if os.environ.get("HEADLESS", "0") != "1":
+        import threading
+        import webbrowser
+        def _open_browser():
+            time.sleep(1.2)
+            try:
+                webbrowser.open(f"http://localhost:{PORT}")
+            except Exception:
+                pass
+        threading.Thread(target=_open_browser, daemon=True).start()
 
     try:
         # Binding to 0.0.0.0 enables access from localhost, 127.0.0.1, and LAN IP

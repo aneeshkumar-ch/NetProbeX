@@ -1,0 +1,70 @@
+{
+  "title": "Enterprise Network Vulnerability Assessment Report",
+  "tool": "Enterprise Network Vulnerability Scanner",
+  "scan_id": "test_completed_api_01",
+  "target": "127.0.0.1",
+  "target_host": "127.0.0.1",
+  "scan_mode": "Curated (103)",
+  "ports_scanned": 103,
+  "total_scanned": 103,
+  "open_ports_count": 1,
+  "open_ports": 1,
+  "start_time": "2026-10-06 17:00:00",
+  "end_time": "2026-10-06 17:00:02",
+  "duration": 2.0,
+  "duration_seconds": 2.0,
+  "overall_risk_score": 50,
+  "risk_label": "Medium Risk",
+  "severity_counts": {
+    "Critical": 0,
+    "High": 0,
+    "Medium": 1,
+    "Low": 0,
+    "Info": 0
+  },
+  "severity_breakdown": {
+    "Critical": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "High": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Medium": {
+      "count": 1,
+      "percentage": 100.0
+    },
+    "Low": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "Info": {
+      "count": 0,
+      "percentage": 0.0
+    }
+  },
+  "executive_summary": "An automated network security assessment of target host 127.0.0.1 was conducted evaluating 103 TCP ports in Curated (103) mode. The assessment discovered 1 active listening service(s), with the maximum detected exposure reaching Medium severity and an overall risk score of 50/100 (Medium Risk). Identified services exhibited low-to-medium risk profiles with no direct high-severity CVE matches mapped in active service banners. Top Priority Remediation: Ensure valid SSL/TLS certificates; configure strong cipher suites; disable legacy SSLv3/TLS 1.0/1.1 protocols.",
+  "findings": [
+    {
+      "port": 443,
+      "protocol": "TCP",
+      "state": "OPEN",
+      "service": "https",
+      "banner": "nginx/1.18.0",
+      "product": "nginx",
+      "version": "1.18.0",
+      "highest_cvss": 5.0,
+      "severity": "Medium",
+      "cve_id": "None Found",
+      "remediation": "Ensure valid SSL/TLS certificates; configure strong cipher suites; disable legacy SSLv3/TLS 1.0/1.1 protocols.",
+      "title": "Medium Exposure: nginx/1.18.0 on Port 443/TCP",
+      "finding_title": "Medium Exposure: nginx/1.18.0 on Port 443/TCP",
+      "description": "TCP port 443 was confirmed in the OPEN state via TCP SYN/connect handshake. Protocol probing extracted banner: \"nginx/1.18.0\". Identified software product: nginx version 1.18.0. No active public CVEs directly mapped in NIST NVD for this service banner.",
+      "cvss_score": 5.0,
+      "cvss": 5.0
+    }
+  ],
+  "disclaimer": "Authorized testing only. Confidential security audit document.",
+  "generated_at": "2026-10-06 18:44:29"
+}

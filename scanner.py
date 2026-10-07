@@ -181,40 +181,66 @@ def is_target_in_scope(target: str, scope_file: str = DEFAULT_SCOPE_FILE) -> boo
 
 
 # ==============================================================================
-# WINDOWS PROCESS MAPPING ENGINE
+# PROCESS MAPPING ENGINE (CROSS-PLATFORM)
 # ==============================================================================
 
 def get_listening_processes() -> Dict[int, Dict[str, Any]]:
-    """Maps listening TCP ports to their Windows Process Name and PID."""
+    """Maps listening TCP ports to their Process Name and PID (Windows and Linux)."""
     port_to_proc = {}
-    try:
-        out = subprocess.check_output("netstat -ano -p tcp", shell=True, text=True)
-        pid_to_name = {4: "System (Windows Kernel)"}
-
+    if os.name == "nt":
         try:
-            task_out = subprocess.check_output("tasklist /fo csv /nh", shell=True, text=True)
-            for line in task_out.strip().splitlines():
-                parts = [p.strip(' "') for p in line.split('","')]
-                if len(parts) >= 2:
-                    try:
-                        pid_to_name[int(parts[1])] = parts[0]
-                    except ValueError:
-                        pass
+            out = subprocess.check_output("netstat -ano -p tcp", shell=True, text=True)
+            pid_to_name = {4: "System (Windows Kernel)"}
+
+            try:
+                task_out = subprocess.check_output("tasklist /fo csv /nh", shell=True, text=True)
+                for line in task_out.strip().splitlines():
+                    parts = [p.strip(' "') for p in line.split('","')]
+                    if len(parts) >= 2:
+                        try:
+                            pid_to_name[int(parts[1])] = parts[0]
+                        except ValueError:
+                            pass
+            except Exception:
+                pass
+
+            for line in out.splitlines():
+                line = line.strip()
+                if "LISTENING" in line:
+                    tokens = line.split()
+                    if len(tokens) >= 5:
+                        local_addr = tokens[1]
+                        pid = int(tokens[4])
+                        port = int(local_addr.split(":")[-1])
+                        proc_name = pid_to_name.get(pid, f"PID {pid}")
+                        port_to_proc[port] = {"pid": pid, "name": proc_name}
         except Exception:
             pass
-
-        for line in out.splitlines():
-            line = line.strip()
-            if "LISTENING" in line:
+    else:
+        # Linux / POSIX systems
+        try:
+            ss_out = subprocess.check_output(["ss", "-tlpn"], text=True, stderr=subprocess.DEVNULL)
+            for line in ss_out.splitlines()[1:]:
                 tokens = line.split()
-                if len(tokens) >= 5:
-                    local_addr = tokens[1]
-                    pid = int(tokens[4])
-                    port = int(local_addr.split(":")[-1])
-                    proc_name = pid_to_name.get(pid, f"PID {pid}")
-                    port_to_proc[port] = {"pid": pid, "name": proc_name}
-    except Exception:
-        pass
+                if len(tokens) >= 4 and "LISTEN" in tokens[0]:
+                    addr = tokens[3]
+                    port_str = addr.rsplit(":", 1)[-1]
+                    try:
+                        port = int(port_str)
+                    except ValueError:
+                        continue
+                    proc_name = "System / Service"
+                    pid_val: Any = "---"
+                    for tok in tokens[4:]:
+                        if "users:" in tok or "users:((" in tok:
+                            m = re.search(r'\("([^"]+)",pid=(\d+)', tok)
+                            if m:
+                                proc_name = m.group(1)
+                                pid_val = int(m.group(2))
+                            break
+                    port_to_proc[port] = {"pid": pid_val, "name": proc_name}
+        except Exception:
+            pass
     return port_to_proc
 
 

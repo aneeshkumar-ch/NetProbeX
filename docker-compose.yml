@@ -1,0 +1,17 @@
+services:
+  netprobex:
+    build: .
+    container_name: netprobex-dashboard
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:666:8765"
+    volumes:
+      - ./reports:/app/reports
+      - ./scope.txt:/app/scope.txt
+      - ./cve_cache.json:/app/cve_cache.json
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    environment:
+      - PORT=8765
+      - HEADLESS=1

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Network Vulnerability Assessment Report - 127.0.0.1</title>
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-sub: #334155;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --accent: #0284c7;
+            --red: #dc2626;
+            --orange: #ea580c;
+            --yellow: #ca8a04;
+            --blue: #2563eb;
+            --gray: #64748b;
+            --green: #16a34a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 30px 20px;
+        }
+        .report-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 40px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 24px;
+            margin-bottom: 28px;
+        }
+        .header-title h1 {
+            font-size: 1.65rem;
+            color: var(--text-main);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+        .header-title p {
+            font-size: 0.90rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .meta-pill {
+            background-color: #f1f5f9;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 16px;
+            text-align: right;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+        .meta-pill strong { color: var(--text-main); }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .meta-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 14px 18px;
+        }
+        .meta-label {
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        .meta-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        .risk-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-left: 6px solid #dc2626;
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .risk-left h2 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .risk-left p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .risk-score-badge {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #dc2626;
+            text-align: right;
+            line-height: 1.1;
+        }
+        .risk-score-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .exec-summary {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 18px 22px;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            color: var(--text-sub);
+            margin-bottom: 32px;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+            margin-bottom: 32px;
+        }
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-sub);
+            text-align: left;
+            padding: 11px 14px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border);
+        }
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        tr:hover td { background-color: #f8fafc; }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-critical { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+        .badge-high     { background: #ffedd5; color: #9a3412; border: 1px solid #fb923c; }
+        .badge-medium   { background: #fef9c3; color: #854d0e; border: 1px solid #facc15; }
+        .badge-low      { background: #dbeafe; color: #1e40af; border: 1px solid #60a5fa; }
+        .badge-info     { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+        /* FINDING CARDS */
+        .finding-card {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 18px;
+            background: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            page-break-inside: avoid;
+        }
+        .finding-card-header {
+            padding: 14px 18px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .finding-card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .finding-card-body {
+            padding: 16px 18px;
+            font-size: 0.88rem;
+        }
+        .finding-desc {
+            color: var(--text-sub);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .finding-remediation {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 10px 14px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.84rem;
+            color: #1e3a8a;
+        }
+        .finding-remediation strong { color: #1d4ed8; }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body { background: #ffffff; padding: 0; }
+            .report-container { border: none; box-shadow: none; padding: 0; max-width: 100%; }
+            .finding-card { page-break-inside: avoid; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-title">
+                <h1>Enterprise Network Vulnerability Assessment Report</h1>
+                <p>Enterprise Network Vulnerability Scanner &bull; Formal Security Audit Artifact</p>
+            </div>
+            <div class="meta-pill">
+                <div>Scan ID: <strong>scan_20261006_184304_d6c973</strong></div>
+                <div>Generated: <strong>2026-10-06 18:43:26</strong></div>
+            </div>
+        </div>
+
+        <!-- META GRID -->
+        <div class="meta-grid">
+            <div class="meta-card">
+                <div class="meta-label">Target Host</div>
+                <div class="meta-value">127.0.0.1</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-label">Scan Mode</div>
+                <div class="meta-value">Curated (103)</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-label">Ports Scanned</div>
+                <div class="meta-value">103</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-label">Open Ports</div>
+                <div class="meta-value">5</div>
+            </div>
+            <div class="meta-card">
+                <div class="meta-label">Duration</div>
+                <div class="meta-value">21.66s</div>
+            </div>
+        </div>
+
+        <!-- RISK BANNER -->
+        <div class="risk-banner">
+            <div class="risk-left">
+                <h2>Overall Risk Posture: Critical Risk</h2>
+                <p>Calculated weighted risk index based on active CVSS v3.1 severity distribution.</p>
+            </div>
+            <div class="risk-score-badge">
+                85<span style="font-size: 1rem; color: var(--text-muted);">/100</span>
+                <div class="risk-score-label">Critical Risk</div>
+            </div>
+        </div>
+
+        <!-- EXECUTIVE SUMMARY -->
+        <div class="section-title">📄 Executive Summary</div>
+        <div class="exec-summary">
+            An automated network security assessment of target host 127.0.0.1 was conducted evaluating 103 TCP ports in Curated (103) mode. The assessment discovered 5 active listening service(s), with the maximum detected exposure reaching Critical severity and an overall risk score of 85/100 (Critical Risk). A total of 1 Critical finding(s) were correlated with publicly disclosed CVEs in NIST NVD, representing immediate vector risk. Top Priority Remediation: Configure Windows Update Delivery Optimization (WUDO) to local network peer sharing only or disable via Group Policy.
+        </div>
+
+        <!-- SEVERITY BREAKDOWN TABLE -->
+        <div class="section-title">📊 Severity Breakdown</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Severity Tier</th>
+                    <th>Identified Findings</th>
+                    <th>Proportion (%)</th>
+                    <th>Risk Significance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge badge-critical">Critical</span></td>
+                    <td><strong>1</strong></td>
+                    <td>20.0%</td>
+                    <td style="color: var(--text-muted);">Immediate exploit vector; remote code execution or root compromise.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-high">High</span></td>
+                    <td><strong>0</strong></td>
+                    <td>0.0%</td>
+                    <td style="color: var(--text-muted);">Significant risk; privilege escalation or perimeter authentication bypass.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-medium">Medium</span></td>
+                    <td><strong>0</strong></td>
+                    <td>0.0%</td>
+                    <td style="color: var(--text-muted);">Moderate exposure; sensitive information disclosure or service disruption.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-low">Low</span></td>
+                    <td><strong>0</strong></td>
+                    <td>0.0%</td>
+                    <td style="color: var(--text-muted);">Minor weakness; low impact or requiring complex pre-requisite conditions.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-info">Info / None</span></td>
+                    <td><strong>4</strong></td>
+                    <td>80.0%</td>
+                    <td style="color: var(--text-muted);">Active service exposure without direct matching high-severity CVE.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- OPEN PORTS TABLE -->
+        <div class="section-title">🌐 Open Ports & Services</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Port / Proto</th>
+                    <th>Service Name</th>
+                    <th>Banner / Version</th>
+                    <th>Severity</th>
+                    <th>CVSS</th>
+                    <th>Top CVE</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                    
+                    <tr>
+                        <td><strong>7680/TCP</strong></td>
+                        <td><code>wudo</code></td>
+                        <td>Windows Update Delivery Optimization</td>
+                        <td>
+                            
+                                <span class="badge badge-critical">Critical</span>
+                            
+                        </td>
+                        <td><strong>10.0</strong></td>
+                        <td><code>CVE-1999-0241</code></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><strong>135/TCP</strong></td>
+                        <td><code>msrpc</code></td>
+                        <td>Microsoft Windows RPC Endpoint Mapper</td>
+                        <td>
+                            
+                                <span class="badge badge-info">Unknown</span>
+                            
+                        </td>
+                        <td><strong>—</strong></td>
+                        <td><code>None Found</code></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><strong>445/TCP</strong></td>
+                        <td><code>microsoft-ds</code></td>
+                        <td>Microsoft Windows SMB (v2/v3 Active)</td>
+                        <td>
+                            
+                                <span class="badge badge-info">Unknown</span>
+                            
+                        </td>
+                        <td><strong>—</strong></td>
+                        <td><code>None Found</code></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><strong>623/TCP</strong></td>
+                        <td><code>asf-rmcp</code></td>
+                        <td>Intel Local Manageability Service</td>
+                        <td>
+                            
+                                <span class="badge badge-info">Unknown</span>
+                            
+                        </td>
+                        <td><strong>—</strong></td>
+                        <td><code>None Found</code></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><strong>5357/TCP</strong></td>
+                        <td><code>wsdapi</code></td>
+                        <td>Microsoft WSDAPI Device Discovery</td>
+                        <td>
+                            
+                                <span class="badge badge-info">Unknown</span>
+                            
+                        </td>
+                        <td><strong>—</strong></td>
+                        <td><code>None Found</code></td>
+                    </tr>
+                    
+                
+            </tbody>
+        </table>
+
+        <!-- DETAILED FINDINGS SECTION -->
+        <div class="section-title">🔍 Detailed Security Findings & Remediation</div>
+        
+            
+            <div class="finding-card">
+                <div class="finding-card-header">
+                    <div class="finding-card-title">
+                        Critical Risk: Exposed Windows Update Delivery Optimization on Port 7680/TCP
+                    </div>
+                    <div>
+                        
+                            <span class="badge badge-critical">Critical</span>
+                        
+                        <span style="margin-left: 6px; font-weight: 700; font-size: 0.85rem;">
+                            10.0
+                        </span>
+                    </div>
+                </div>
+                <div class="finding-card-body">
+                    <div class="finding-desc">
+                        TCP port 7680 was confirmed in the OPEN state via TCP SYN/connect handshake. Protocol probing extracted banner: &#34;Windows Update Delivery Optimization&#34;. Identified software product: Windows. Mapped host process: svchost.exe (PID: 2656). Correlated against NIST NVD with top matching advisory CVE-1999-0241 (CVSS 10.0) (Critical severity).
+                    </div>
+                    <div class="finding-remediation">
+                        <strong>Remediation Steps:</strong> Configure Windows Update Delivery Optimization (WUDO) to local network peer sharing only or disable via Group Policy.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="finding-card">
+                <div class="finding-card-header">
+                    <div class="finding-card-title">
+                        Active Service: Microsoft Windows RPC Endpoint Mapper on Port 135/TCP
+                    </div>
+                    <div>
+                        
+                            <span class="badge badge-info">Unknown</span>
+                        
+                        <span style="margin-left: 6px; font-weight: 700; font-size: 0.85rem;">
+                            CVSS —
+                        </span>
+                    </div>
+                </div>
+                <div class="finding-card-body">
+                    <div class="finding-desc">
+                        TCP port 135 was confirmed in the OPEN state via TCP SYN/connect handshake. Protocol probing extracted banner: &#34;Microsoft Windows RPC Endpoint Mapper&#34;. Identified software product: Microsoft. Mapped host process: svchost.exe (PID: 1480). No active public CVEs directly mapped in NIST NVD for this service banner.
+                    </div>
+                    <div class="finding-remediation">
+                        <strong>Remediation Steps:</strong> Restrict TCP port 135 to internal administrative jump hosts and domain controllers; block external inbound access.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="finding-card">
+                <div class="finding-card-header">
+                    <div class="finding-card-title">
+                        Active Service: Microsoft Windows SMB (v2/v3 Active) on Port 445/TCP
+                    </div>
+                    <div>
+                        
+                            <span class="badge badge-info">Unknown</span>
+                        
+                        <span style="margin-left: 6px; font-weight: 700; font-size: 0.85rem;">
+                            CVSS —
+                        </span>
+                    </div>
+                </div>
+                <div class="finding-card-body">
+                    <div class="finding-desc">
+                        TCP port 445 was confirmed in the OPEN state via TCP SYN/connect handshake. Protocol probing extracted banner: &#34;Microsoft Windows SMB (v2/v3 Active)&#34;. Identified software product: Microsoft. Mapped host process: System (PID: 4). No active public CVEs directly mapped in NIST NVD for this service banner.
+                    </div>
+                    <div class="finding-remediation">
+                        <strong>Remediation Steps:</strong> Disable SMBv1 host-wide; apply latest Microsoft security updates; isolate port 445 to trusted administrative subnets via perimeter firewall.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="finding-card">
+                <div class="finding-card-header">
+                    <div class="finding-card-title">
+                        Active Service: Intel Local Manageability Service on Port 623/TCP
+                    </div>
+                    <div>
+                        
+                            <span class="badge badge-info">Unknown</span>
+                        
+                        <span style="margin-left: 6px; font-weight: 700; font-size: 0.85rem;">
+                            CVSS —
+                        </span>
+                    </div>
+                </div>
+                <div class="finding-card-body">
+                    <div class="finding-desc">
+                        TCP port 623 was confirmed in the OPEN state via TCP SYN/connect handshake. Protocol probing extracted banner: &#34;Intel Local Manageability Service&#34;. Identified software product: Intel. Mapped host process: LMS.exe (PID: 4588). No active public CVEs directly mapped in NIST NVD for this service banner.
+                    </div>
+                    <div class="finding-remediation">
+                        <strong>Remediation Steps:</strong> Update Intel AMT firmware; isolate management interface to dedicated out-of-band management VLAN.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="finding-card">
+                <div class="finding-card-header">
+                    <div class="finding-card-title">
+                        Active Service: Microsoft WSDAPI Device Discovery on Port 5357/TCP
+                    </div>
+                    <div>
+                        
+                            <span class="badge badge-info">Unknown</span>
+                        
+                        <span style="margin-left: 6px; font-weight: 700; font-size: 0.85rem;">
+                            CVSS —
+                        </span>
+                    </div>
+                </div>
+                <div class="finding-card-body">
+                    <div class="finding-desc">
+                        TCP port 5357 was confirmed in the OPEN state via TCP SYN/connect handshake. Protocol probing extracted banner: &#34;Microsoft WSDAPI Device Discovery&#34;. Identified software product: Microsoft. Mapped host process: System (PID: 4). No active public CVEs directly mapped in NIST NVD for this service banner.
+                    </div>
+                    <div class="finding-remediation">
+                        <strong>Remediation Steps:</strong> Disable Windows Web Services on Devices (WSDAPI) discovery if network printer/device discovery is not required.
+                    </div>
+                </div>
+            </div>
+            
+        
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <div>Authorized testing only. Confidential security audit document.</div>
+            <div>Generated by <strong>Enterprise Network Vulnerability Scanner</strong> &bull; 2026-10-06 18:43:26</div>
+        </div>
+    </div>
+</body>
+</html>
