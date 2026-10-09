@@ -1774,7 +1774,7 @@ def verify_port_available(host: str, port: int) -> Tuple[bool, str]:
 
 if __name__ == "__main__":
     HOST = "0.0.0.0"
-    PORT = int(os.environ.get("PORT", 8765))
+    PORT = int(os.environ.get("NETPROBEX_PORT", os.environ.get("DASHBOARD_PORT", 8765)))
 
     print("\n" + "=" * 80, flush=True)
     print("  ENTERPRISE NETWORK VULNERABILITY SCANNER — SERVER STARTUP", flush=True)
